@@ -111,7 +111,7 @@ fn main() -> ExitCode {
                     if verbose {
                         eprintln!("Changing directory to {}", target.display());
                     }
-                    set_current_dir(&target).expect("set current directory");
+                    println!("{}", target.to_string_lossy());
                 }
             } else {
                 if verbose {
