@@ -1,6 +1,5 @@
 use std::{
     collections::HashMap,
-    env::set_current_dir,
     fs::read_to_string,
     path::PathBuf,
     process::{Command, ExitCode},
