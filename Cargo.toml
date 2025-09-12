@@ -1,0 +1,22 @@
+[package]
+name = "git-site-clone"
+version = "1.0.0"
+authors = ["Alexander Korolev <alexander.korolev.germany@gmail.com>"]
+edition = "2024"
+categories = []
+description = """
+git-site-clone allows you to clone repositories from a given URL or clipboard to configured base directory and mappings for cloning repositories. Useful for managing multiple repositories under a single directory related to host name.
+"""
+homepage = "https://github.com/rust-application/git-site-clone"
+keywords = []
+license = "Unlicense OR MIT"
+repository = "https://github.com/rust-application/git-site-clone"
+rust-version = "1.89"
+
+[dependencies]
+clipboard = "0.5.0"
+confy = "1"
+git-url-parse = "0.4.5"
+serde = { version = "1", features = ["derive"] }
+url = "~2.2"
+xflags = "0.3.2"
