@@ -59,7 +59,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libx11-dev libx11-xcb-dev libxcb-render0-dev libxkbcommon-dev
+          sudo apt-get install -y libx11-dev libx11-xcb-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev
 
       # -------------------------------------------------------------
       # Build
