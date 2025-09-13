@@ -38,7 +38,7 @@ jobs:
       - name: Archive
         id: archive
         run: |
-          BIN=${{ github.event.repository.name }}          # <‑‑ change if binary name differs
+          BIN=${{ github.event.repository.name }}
           ARTIFACT="target/release/${BIN}"
           TARGET=`rustc -vV | awk '/^host/ { print $2 }'`
           if [[ "$RUNNER_OS" == "Windows" ]]; then
@@ -52,7 +52,7 @@ jobs:
             7z a -tzip dist/${BIN}-${TARGET}.zip dist/*
             echo "artifact=${BIN}-${TARGET}.zip" >> "$GITHUB_OUTPUT"
           else
-            tar czf dist/${BIN}-${TARGET}.tar.gz dist/${ARTIFACT}
+            tar czf dist/${BIN}-${TARGET}.tar.gz dist/${BIN}
             echo "artifact=${BIN}-${TARGET}.tar.gz" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/upload-artifact@v4
