@@ -30,3 +30,28 @@ jobs:
       - name: Test
         run: |
           cargo test --release
+      - name: Archive
+        id: archive
+        run: |
+          BIN=${{ github.event.repository.name }}          # <‑‑ change if binary name differs
+          ARTIFACT="target/release/${BIN}"
+          TARGET=`rustc -vV | awk '/^host/ { print $2 }'`
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            ARTIFACT="${ARTIFACT}.exe"
+          fi
+          mkdir -p dist
+          cp "$ARTIFACT" dist/
+          echo "target=${TARGET}" >> "$GITHUB_OUTPUT"
+
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            7z a -tzip dist/${BIN}-${TARGET}.zip dist/*
+            echo "artifact=${BIN}-${TARGET}.zip" >> "$GITHUB_OUTPUT"
+          else
+            tar czf dist/${BIN}-${TARGET}.tar.gz -C dist .
+            echo "artifact=${BIN}-${TARGET}.tar.gz" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive.outputs.target }}
+          path: dist/${{ steps.archive.outputs.artifact }}
+          retention-days: 1
