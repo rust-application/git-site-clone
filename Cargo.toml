@@ -13,8 +13,12 @@ license = "Unlicense OR MIT"
 repository = "https://github.com/rust-application/git-site-clone"
 rust-version = "1.89"
 
+[features]
+default = ["clipboard"]
+clipboard = ["dep:clipboard"]
+
 [dependencies]
-clipboard = "0.5.0"
+clipboard = { version = "0.5.0", optional = true }
 confy = "1"
 git-url-parse = "0.4.5"
 serde = { version = "1", features = ["derive"] }
