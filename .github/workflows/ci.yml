@@ -52,7 +52,7 @@ jobs:
             7z a -tzip dist/${BIN}-${TARGET}.zip dist/*
             echo "artifact=${BIN}-${TARGET}.zip" >> "$GITHUB_OUTPUT"
           else
-            tar czf dist/${BIN}-${TARGET}.tar.gz -C dist .
+            tar czf dist/${BIN}-${TARGET}.tar.gz dist/${ARTIFACT}
             echo "artifact=${BIN}-${TARGET}.tar.gz" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/upload-artifact@v4
