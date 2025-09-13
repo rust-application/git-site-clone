@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.os }} / ${{ matrix.target }}
+    name: Build ${{ matrix.os }} / ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -17,26 +17,26 @@ jobs:
         # ----------------------------------------------------
         os: [ubuntu-latest, macos-latest, windows-latest]
         arch: [x86_64, aarch64]
-        include:
+        # include:
           # ---- Linux ----------------------------------------------------
-          - os: ubuntu-latest
-            arch: x86_64
-            target: x86_64-unknown-linux-gnu
-          - os: ubuntu-latest
-            arch: aarch64
-            target: aarch64-unknown-linux-gnu
+          # - os: ubuntu-latest
+          #   arch: x86_64
+          #   target: x86_64-unknown-linux-gnu
+          # - os: ubuntu-latest
+          #   arch: aarch64
+          #   target: aarch64-unknown-linux-gnu
           # ---- macOS ----------------------------------------------------
-          - os: macos-latest
-            arch: x86_64
-            target: x86_64-apple-darwin
-          - os: macos-latest
-            arch: aarch64
-            target: aarch64-apple-darwin
+          # - os: macos-latest
+          #   arch: x86_64
+          #   target: x86_64-apple-darwin
+          # - os: macos-latest
+          #   arch: aarch64
+          #   target: aarch64-apple-darwin
           # ---- Windows ----------------------------------------------------
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-          - os: windows-latest
-            target: x86_64-pc-windows-gnu
+          # - os: windows-latest
+          #   target: x86_64-pc-windows-msvc
+          # - os: windows-latest
+          #   target: x86_64-pc-windows-gnu
     env:
       RUSTFLAGS: -C target-cpu=native
     steps:
@@ -49,8 +49,6 @@ jobs:
       # Install Rust toolchain for the target
       # -------------------------------------------------------------
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          target: ${{ matrix.target }}
 
       # -------------------------------------------------------------
       # Install X11 dev libs on the Ubuntu runner only
@@ -66,4 +64,4 @@ jobs:
       # -------------------------------------------------------------
       - name: Build
         run: |
-          cargo build --release --target ${{ matrix.target }} --features clipboard
+          cargo build --release
