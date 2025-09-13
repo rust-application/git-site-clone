@@ -16,6 +16,7 @@ jobs:
         #  Native GitHub runners – no self‑hosted required
         # ----------------------------------------------------
         os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [x86_64, aarch64]
         include:
           # ---- Linux ----------------------------------------------------
           - os: ubuntu-latest
@@ -44,7 +45,7 @@ jobs:
       # -------------------------------------------------------------
       # Checkout the source
       # -------------------------------------------------------------
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # -------------------------------------------------------------
       # Install Rust toolchain for the target
