@@ -34,10 +34,8 @@ jobs:
             target: aarch64-apple-darwin
           # ---- Windows ----------------------------------------------------
           - os: windows-latest
-            arch: x86_64
             target: x86_64-pc-windows-msvc
           - os: windows-latest
-            arch: x86_64
             target: x86_64-pc-windows-gnu
     env:
       RUSTFLAGS: -C target-cpu=native
