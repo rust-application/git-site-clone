@@ -15,14 +15,14 @@ rust-version = "1.89"
 
 [features]
 default = ["clipboard"]
-clipboard = ["dep:clipboard"]
+clipboard = ["dep:arboard"]
 
 [dependencies]
-clipboard = { version = "0.5.0", optional = true }
+arboard = { version = "3.6.1", default-features = false, optional = true }
 confy = "1"
-git-url-parse = "0.4.5"
+git-url-parse = "0.5"
 serde = { version = "1", features = ["derive"] }
-url = "~2.2"
+# url = "~2.2"
 xflags = "0.3.2"
 
 [profile.release]

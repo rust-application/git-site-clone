@@ -1,19 +1,14 @@
 name: release
 
-# Only do the release on x.y.z tags.
 on:
   push:
     tags:
       - "v*"
 
-# We need this to be able to create releases.
 permissions:
   contents: write
 
 jobs:
-  # The create-release job runs purely to initialize the GitHub release itself,
-  # and names the release after the `x.y.z` tag that was pushed. It's separate
-  # from building the release so that we only create the release once.
   create-release:
     name: create-release
     runs-on: ubuntu-latest
@@ -28,7 +23,7 @@ jobs:
       - name: Create GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create $VERSION --draft --verify-tag --title $VERSION
+        run: gh release create $VERSION --draft --verify-tag --generate-notes --title "Release $VERSION"
     outputs:
       version: ${{ env.VERSION }}
 
@@ -37,21 +32,11 @@ jobs:
     needs: ['create-release']
     runs-on: ${{ matrix.os }}
     env:
-      # For some builds, we use cross to test on 32-bit and big-endian
-      # systems.
       CARGO: cargo
-      # When CARGO is set to CROSS, this is set to `--target matrix.target`.
       TARGET_FLAGS: ""
-      # When CARGO is set to CROSS, TARGET_DIR includes matrix.target.
       TARGET_DIR: ./target
-      # Bump this as appropriate. We pin to a version to make sure CI
-      # continues to work as cross releases in the past have broken things
-      # in subtle ways.
       CROSS_VERSION: v0.2.5
-      # Emit backtraces on panics.
       RUST_BACKTRACE: 1
-      # Build static releases with PCRE2.
-      PCRE2_SYS_STATIC: 1
     strategy:
       fail-fast: false
       matrix:
@@ -167,7 +152,13 @@ jobs:
     - name: Build release binary
       shell: bash
       run: |
-        ${{ env.CARGO }} build --verbose --release --features pcre2 ${{ env.TARGET_FLAGS }}
+        rm rust-toolchain.toml
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          opts="--no-default-features"
+        else
+          opts=""
+        fi
+        ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }} $opts
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
           bin="target/${{ matrix.target }}/release/git-site-clone.exe"
         else

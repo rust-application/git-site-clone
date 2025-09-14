@@ -71,10 +71,11 @@ fn main() -> ExitCode {
             let url = url.unwrap_or_else(|| {
                 #[cfg(feature = "clipboard")]
                 {
-                    use clipboard::{ClipboardContext, ClipboardProvider};
-                    let mut ctx: ClipboardContext =
-                        ClipboardProvider::new().expect("clipboard context");
-                    ctx.get_contents().expect("clipboard context")
+                    use arboard::Clipboard;
+                    Clipboard::new()
+                        .expect("clipboart")
+                        .get_text()
+                        .expect("clipboard text")
                 }
                 #[cfg(not(feature = "clipboard"))]
                 {
@@ -82,7 +83,7 @@ fn main() -> ExitCode {
                 }
             });
             let git_url = git_url_parse::GitUrl::parse(&url).expect("valid git url");
-            if let Some(host) = git_url.host.as_deref() {
+            if let Some(host) = git_url.host() {
                 let base_dir = base
                     .as_ref()
                     .map(|base| base.join(host))
@@ -93,7 +94,7 @@ fn main() -> ExitCode {
                             .cloned()
                             .unwrap_or(config.base.join(host))
                     });
-                let path = git_url.path.as_str();
+                let path = git_url.path();
                 let path = path.strip_prefix("/").unwrap_or(path);
                 let path = path.strip_suffix(".git").unwrap_or(path);
                 let target = base_dir.join(path);
