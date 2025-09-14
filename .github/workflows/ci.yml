@@ -123,6 +123,7 @@ jobs:
         curl -LO "https://github.com/cross-rs/cross/releases/download/$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
         tar xf cross-x86_64-unknown-linux-musl.tar.gz
         echo "CARGO=cross" >> $GITHUB_ENV
+        rm .cargo/config.toml
 
     - name: Set target variables
       shell: bash
