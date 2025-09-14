@@ -12,5 +12,4 @@ fi
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
   zsh xz-utils liblz4-tool musl-tools brotli zstd \
-  python3 python3-dev \
   libx11-dev libx11-xcb-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev

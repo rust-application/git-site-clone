@@ -69,10 +69,17 @@ fn main() -> ExitCode {
             let config = load_config();
 
             let url = url.unwrap_or_else(|| {
-                use clipboard::{ClipboardContext, ClipboardProvider};
-                let mut ctx: ClipboardContext =
-                    ClipboardProvider::new().expect("clipboard context");
-                ctx.get_contents().expect("clipboard context")
+                #[cfg(feature = "clipboard")]
+                {
+                    use clipboard::{ClipboardContext, ClipboardProvider};
+                    let mut ctx: ClipboardContext =
+                        ClipboardProvider::new().expect("clipboard context");
+                    ctx.get_contents().expect("clipboard context")
+                }
+                #[cfg(not(feature = "clipboard"))]
+                {
+                    panic!("url not provided");
+                }
             });
             let git_url = git_url_parse::GitUrl::parse(&url).expect("valid git url");
             if let Some(host) = git_url.host.as_deref() {

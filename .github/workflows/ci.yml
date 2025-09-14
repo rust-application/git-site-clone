@@ -113,7 +113,6 @@ jobs:
       if: matrix.os == 'ubuntu-latest' && matrix.target != ''
       shell: bash
       run: |
-        rm .cargo/config.toml
         # In the past, new releases of 'cross' have broken CI. So for now, we
         # pin it. We also use their pre-compiled binary releases because cross
         # has over 100 dependencies and takes a bit to compile.
@@ -142,7 +141,12 @@ jobs:
       shell: bash
       run: |
         rm rust-toolchain.toml
-        ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }}
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          opts="--no-default-features"
+        else
+          opts=""
+        fi
+        ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }} $opts
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
           bin="target/${{ matrix.target }}/release/git-site-clone.exe"
         else
