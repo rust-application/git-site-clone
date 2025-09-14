@@ -140,6 +140,7 @@ jobs:
     - name: Build release binary
       shell: bash
       run: |
+        rm rust-toolchain.toml
         ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }}
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
           bin="target/${{ matrix.target }}/release/git-site-clone.exe"
