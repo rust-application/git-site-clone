@@ -141,11 +141,6 @@ jobs:
       shell: bash
       run: |
         rm rust-toolchain.toml
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          opts="--no-default-features"
-        else
-          opts=""
-        fi
         ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }} $opts
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
           bin="target/${{ matrix.target }}/release/git-site-clone.exe"
