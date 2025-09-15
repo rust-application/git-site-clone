@@ -71,6 +71,9 @@ fn main() -> ExitCode {
             let url = url.unwrap_or_else(|| {
                 #[cfg(feature = "clipboard")]
                 {
+                    if cfg!(target_os = "linux") && std::env::var("DISPLAY").is_err() {
+                        panic!("url not provided");
+                    }
                     use arboard::Clipboard;
                     Clipboard::new()
                         .expect("clipboart")
@@ -135,6 +138,7 @@ fn main() -> ExitCode {
 
             match config_cmd.subcommand {
                 flags::ConfigCmd::Show(_) => {
+                    let _ = load_config();
                     let config_str = read_to_string(&config_path).expect("config file read");
                     println!("{config_str}");
                 }
