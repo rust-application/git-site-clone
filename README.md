@@ -40,6 +40,8 @@ You can contribute to the ongoing development and maintenance of **git-site-clon
 
 Your support, no matter how big or small, helps sustain the project and ensures its continued improvement. Reach out to explore sponsorship opportunities.
 
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/kilork)
+
 ### Feedback
 
 Whether you are a developer, user, or enthusiast, your feedback is invaluable. Share your thoughts, suggestions, and ideas to help shape the future of the library.
@@ -54,25 +56,25 @@ Thank you for being part of **git-site-clone** community. Together, we are makin
 
 Install the package using Cargo:
 
-```sh
+```
 cargo install git-site-clone
 ```
 
 Configure the base directory and mappings for cloning repositories:
 
-```sh
+```
 git-site-clone config base /path/to/base/directory
 ```
 
 Now you can clone repositories using the following command:
 
-```sh
+```
 git-site-clone <url>
 ```
 
 For example, to clone a repository from GitHub:
 
-```sh
+```
 git-site-clone https://github.com/user/repo.git
 ```
 
@@ -80,31 +82,31 @@ This will clone the repository to `/path/to/base/directory/github.com/user/repo`
 
 Configure the mappings for cloning repositories:
 
-```sh
+```
 git-site-clone config mappings add <source> <destination>
 ```
 
 For example, to map a GitHub repository to a local directory:
 
-```sh
+```
 git-site-clone config mappings add github.com /path/to/local/github.com
 ```
 
 To remove a mapping:
 
-```sh
+```
 git-site-clone config mappings remove <source>
 ```
 
 For example, to remove the mapping for GitHub:
 
-```sh
+```
 git-site-clone config mappings remove github.com
 ```
 
 Learn more about available options:
 
-```sh
+```
 $ git-site-clone --help
 git-site-clone
   Allows you to clone repositories from a given URL or clipboard to configured base directory and mappings for cloning repositories. Useful for managing multiple repositories under a single directory related to host name.
