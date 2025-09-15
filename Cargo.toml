@@ -1,6 +1,6 @@
 [package]
 name = "git-site-clone"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Alexander Korolev <alexander.korolev.germany@gmail.com>"]
 edition = "2024"
 categories = []
