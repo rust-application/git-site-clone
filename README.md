@@ -164,7 +164,7 @@ git-site-clone config mappings remove
     <host>
 ```
 
-To change to cloned directory, configure the `gsc` function like this:
+To change to cloned directory, configure the `gsc` function in your shell configuration file like this:
 
 ```bash
 function gsc() {
