@@ -11,7 +11,7 @@ homepage = "https://github.com/rust-application/git-site-clone"
 keywords = []
 license = "Unlicense OR MIT"
 repository = "https://github.com/rust-application/git-site-clone"
-rust-version = "1.89"
+rust-version = "1.90.0"
 
 [features]
 default = ["clipboard"]
@@ -20,7 +20,7 @@ clipboard = ["dep:arboard"]
 [dependencies]
 arboard = { version = "3.6.1", default-features = false, optional = true }
 confy = "1"
-git-url-parse = "0.5"
+git-url-parse = "0.6"
 serde = { version = "1", features = ["derive"] }
 # url = "~2.2"
 xflags = "0.3.2"

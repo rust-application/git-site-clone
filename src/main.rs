@@ -103,19 +103,27 @@ fn main() -> ExitCode {
                 let target = base_dir.join(path);
                 if verbose {
                     eprintln!("Target: {}", target.display());
-                    eprintln!("Cloning with git {url} to {target:?}...");
                 }
-                let status = Command::new("git")
-                    .arg("clone")
-                    .arg(&url)
-                    .arg(&target)
-                    .status()
-                    .expect("git clone repository");
-                if !status.success() {
+                if target.exists() {
                     if verbose {
-                        eprintln!("Failed to clone repository");
+                        eprintln!("Target directory already exists");
                     }
-                    return ExitCode::from(status.code().unwrap_or(1) as u8);
+                } else {
+                    if verbose {
+                        eprintln!("Cloning with git {url} to {target:?}...");
+                    }
+                    let status = Command::new("git")
+                        .arg("clone")
+                        .arg(&url)
+                        .arg(&target)
+                        .status()
+                        .expect("git clone repository");
+                    if !status.success() {
+                        if verbose {
+                            eprintln!("Failed to clone repository");
+                        }
+                        return ExitCode::from(status.code().unwrap_or(1) as u8);
+                    }
                 }
                 if !no_cwd {
                     if verbose {
