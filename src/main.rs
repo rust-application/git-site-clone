@@ -182,14 +182,16 @@ fn get_config_path() -> PathBuf {
 }
 
 fn load_config() -> ConfigFile {
-    confy::load(env!("CARGO_BIN_NAME"), None).unwrap_or_else(|_| {
-        let home = dirs::home_dir().expect("home directory");
+    let config_path = get_config_path();
+    if !config_path.exists() {
+        let home = dirs::home_dir().unwrap_or_else(|| PathBuf::from("/root"));
         let base = home.join("git");
         let config = ConfigFile {
             base,
             ..Default::default()
         };
         store_config(config.clone());
-        config
-    })
+        return config;
+    }
+    confy::load(env!("CARGO_BIN_NAME"), None).expect("configuration load")
 }
