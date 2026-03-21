@@ -5,7 +5,9 @@ authors = ["Alexander Korolev <alexander.korolev.germany@gmail.com>"]
 edition = "2024"
 categories = []
 description = """
-git-site-clone allows you to clone repositories from a given URL or clipboard to configured base directory and mappings for cloning repositories. Useful for managing multiple repositories under a single directory related to host name.
+Clone git repositories from URLs or clipboard to a configured base directory. 
+Organizes repos by hostname (github.com/, gitlab.com/, etc.) with host-based 
+mappings. Includes shell integration for quick access.
 """
 homepage = "https://github.com/rust-application/git-site-clone"
 keywords = []
