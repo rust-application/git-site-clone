@@ -7,6 +7,32 @@ on:
     branches: [main]
 
 jobs:
+  docker-e2e:
+    name: docker-e2e
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and test Alpine
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        target: test-alpine
+        tags: git-site-clone:test-alpine
+
+    - name: Build and test Ubuntu
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        target: test-ubuntu
+        tags: git-site-clone:test-ubuntu
+
   windows-e2e:
     name: windows-e2e
     runs-on: windows-latest

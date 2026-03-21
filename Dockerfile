@@ -1,4 +1,4 @@
-FROM rust:1.90 AS builder
+FROM rust:1.90-alpine AS builder
 
 WORKDIR /build
 
@@ -6,7 +6,8 @@ COPY Cargo.toml Cargo.lock ./
 COPY rust-toolchain.toml ./
 COPY src ./src
 
-RUN cargo build --release
+RUN apk add --no-cache musl-dev && \
+    cargo build --release
 
 FROM alpine:3.20 AS test-alpine
 
