@@ -185,9 +185,8 @@ fn load_config() -> ConfigFile {
     let config_path = get_config_path();
     if !config_path.exists() {
         let home = dirs::home_dir().unwrap_or_else(|| PathBuf::from("/root"));
-        let base = home.join("git");
         let config = ConfigFile {
-            base,
+            base: home,
             ..Default::default()
         };
         store_config(config.clone());

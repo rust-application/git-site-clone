@@ -20,7 +20,7 @@ RUN rm -rf /root/.config/git-site-clone
 
 RUN git-site-clone -v config show 2>&1 && \
     git-site-clone -v config show 2>&1 | grep -q "Configuration path:" && \
-    git-site-clone -v config show 2>&1 | grep -q 'base = "/root/git"' && \
+    git-site-clone -v config show 2>&1 | grep -q 'base = "/root"' && \
     echo "PASS: Alpine auto-config test" || (echo "FAIL: Alpine auto-config test" && exit 1)
 
 RUN rm -rf /root/.config/git-site-clone
@@ -32,7 +32,7 @@ RUN git-site-clone -v config base /custom/path && \
 RUN rm -rf /root/.config/git-site-clone
 
 RUN git-site-clone -v --no-cwd https://github.com/octocat/Hello-World && \
-    test -d /root/git/github.com/octocat/Hello-World && \
+    test -d /root/github.com/octocat/Hello-World && \
     echo "PASS: Alpine clone test" || (echo "FAIL: Alpine clone test" && exit 1)
 
 FROM ubuntu:24.04 AS test-ubuntu
@@ -46,7 +46,7 @@ RUN rm -rf /root/.config/git-site-clone
 
 RUN git-site-clone -v config show 2>&1 && \
     git-site-clone -v config show 2>&1 | grep -q "Configuration path:" && \
-    git-site-clone -v config show 2>&1 | grep -q 'base = "/root/git"' && \
+    git-site-clone -v config show 2>&1 | grep -q 'base = "/root"' && \
     echo "PASS: Ubuntu auto-config test" || (echo "FAIL: Ubuntu auto-config test" && exit 1)
 
 RUN rm -rf /root/.config/git-site-clone
@@ -58,5 +58,5 @@ RUN git-site-clone -v config base /custom/path && \
 RUN rm -rf /root/.config/git-site-clone
 
 RUN git-site-clone -v --no-cwd https://github.com/octocat/Hello-World && \
-    test -d /root/git/github.com/octocat/Hello-World && \
+    test -d /root/github.com/octocat/Hello-World && \
     echo "PASS: Ubuntu clone test" || (echo "FAIL: Ubuntu clone test" && exit 1)
