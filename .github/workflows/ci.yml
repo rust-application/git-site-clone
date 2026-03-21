@@ -31,6 +31,7 @@ jobs:
       with:
         context: .
         load: true
+        no-cache: true
         target: test-ubuntu
         tags: git-site-clone:test-ubuntu
 
