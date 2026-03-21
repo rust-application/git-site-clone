@@ -62,7 +62,7 @@ jobs:
         toolchain: 1.90.0
 
     - name: Build
-      run: cargo build --release
+      run: cargo build --release --features self-update
 
     - name: Test auto-config creation
       run: |
@@ -82,6 +82,11 @@ jobs:
         Remove-Item -Path "$env:USERPROFILE\github.com" -Recurse -Force -ErrorAction SilentlyContinue
         .\target\release\git-site-clone.exe -v --no-cwd https://github.com/octocat/Hello-World
         Test-Path "$env:USERPROFILE\github.com\octocat\Hello-World"
+
+    - name: Test self-update and version
+      run: |
+        .\target\release\git-site-clone.exe --version
+        .\target\release\git-site-clone.exe self-update
 
   build-release:
     name: build-release
