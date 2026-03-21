@@ -184,7 +184,7 @@ fn get_config_path() -> PathBuf {
 fn load_config() -> ConfigFile {
     let config_path = get_config_path();
     if !config_path.exists() {
-        let home = dirs::home_dir().unwrap_or_else(|| PathBuf::from("/root"));
+        let home = dirs::home_dir().expect("home directory");
         let config = ConfigFile {
             base: home,
             ..Default::default()
