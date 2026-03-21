@@ -53,6 +53,8 @@ mod flags {
                     }
                 }
             }
+            /// Initialize shell integration
+            cmd init {}
         }
     }
 }
@@ -169,6 +171,12 @@ fn main() -> ExitCode {
                 }
             }
         }
+        flags::GitSiteCloneCmd::Init(_) => {
+            if let Err(e) = init_shell() {
+                eprintln!("Failed to initialize shell: {}", e);
+                return ExitCode::FAILURE;
+            }
+        }
     }
     ExitCode::SUCCESS
 }
@@ -193,4 +201,78 @@ fn load_config() -> ConfigFile {
         return config;
     }
     confy::load(env!("CARGO_BIN_NAME"), None).expect("configuration load")
+}
+
+fn get_shell_rc() -> Option<(PathBuf, &'static str)> {
+    let shell = std::env::var("SHELL").ok()?;
+    let home = dirs::home_dir()?;
+
+    if shell.contains("zsh") {
+        Some((home.join(".zshrc"), "zsh"))
+    } else if shell.contains("bash") {
+        if home.join(".bashrc").exists() {
+            Some((home.join(".bashrc"), "bash"))
+        } else {
+            Some((home.join(".bash_profile"), "bash"))
+        }
+    } else if shell.contains("fish") {
+        Some((home.join(".config/fish/config.fish"), "fish"))
+    } else {
+        None
+    }
+}
+
+fn init_shell() -> Result<(), Box<dyn std::error::Error>> {
+    let (rc_path, shell) = get_shell_rc().ok_or("Could not detect shell or shell RC file")?;
+
+    eprintln!("Detected shell: {}", shell);
+
+    let gsc_function = match shell {
+        "zsh" | "bash" => {
+            r#"
+function gsc() {
+    local repo
+    repo=$(git-site-clone "$@")
+    if [ -d "$repo" ]; then
+        cd "$repo"
+    fi
+}
+"#
+        }
+        "fish" => {
+            r#"
+function gsc
+    set repo (git-site-clone $argv)
+    if test -d "$repo"
+        cd "$repo"
+    end
+end
+"#
+        }
+        _ => return Err("Unsupported shell".into()),
+    };
+
+    let rc_content = read_to_string(&rc_path).unwrap_or_default();
+
+    if rc_content.contains("function gsc()") || rc_content.contains("function gsc") {
+        eprintln!("gsc function already exists in {}", rc_path.display());
+    } else {
+        let mut file = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(&rc_path)?;
+
+        use std::io::Write;
+        writeln!(file, "\n# git-site-clone shell integration")?;
+        file.write_all(gsc_function.as_bytes())?;
+
+        eprintln!("Added gsc function to {}", rc_path.display());
+    }
+
+    eprintln!(
+        "Please restart your shell or run: source {}",
+        rc_path.display()
+    );
+
+    Ok(())
 }
