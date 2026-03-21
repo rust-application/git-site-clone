@@ -33,6 +33,38 @@ jobs:
         target: test-ubuntu
         tags: git-site-clone:test-ubuntu
 
+  windows-e2e:
+    name: windows-e2e
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+
+    - name: Build
+      run: cargo build --release
+
+    - name: Test auto-config creation
+      run: |
+        Remove-Item -Path "$env:APPDATA\git-site-clone" -Recurse -Force -ErrorAction SilentlyContinue
+        .\target\release\git-site-clone.exe -v config show
+        .\target\release\git-site-clone.exe -v config show | Select-String -Pattern "Configuration path:"
+
+    - name: Test config base update
+      run: |
+        Remove-Item -Path "$env:APPDATA\git-site-clone" -Recurse -Force -ErrorAction SilentlyContinue
+        .\target\release\git-site-clone.exe -v config base C:\custom\path
+        .\target\release\git-site-clone.exe -v config show | Select-String -Pattern 'base = "C:\\custom\\path"'
+
+    - name: Test clone
+      run: |
+        Remove-Item -Path "$env:APPDATA\git-site-clone" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$env:USERPROFILE\github.com" -Recurse -Force -ErrorAction SilentlyContinue
+        .\target\release\git-site-clone.exe -v --no-cwd https://github.com/octocat/Hello-World
+        Test-Path "$env:USERPROFILE\github.com\octocat\Hello-World"
+
   build-release:
     name: build-release
     # needs: ['create-release']
