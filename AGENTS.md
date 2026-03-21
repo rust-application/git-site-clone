@@ -23,6 +23,14 @@ Use squash merge to keep main history clean:
 gh pr merge <number> --admin --delete-branch --squash
 ```
 
+### Important: Never commit directly to main
+
+All changes must go through PRs:
+1. Create branch from issue: `gh issue develop <number> --checkout`
+2. Commit and push: `git push -u origin <branch>`
+3. Create PR: `gh pr create`
+4. Wait for CI and merge via PR (never direct commit to main)
+
 ## Build Commands
 
 ```bash
