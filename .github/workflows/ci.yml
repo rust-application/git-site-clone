@@ -33,6 +33,22 @@ jobs:
         target: test-ubuntu
         tags: git-site-clone:test-ubuntu
 
+    - name: Build and test init on Alpine
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        target: test-init-alpine
+        tags: git-site-clone:test-init-alpine
+
+    - name: Build and test init on Ubuntu
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        target: test-init-ubuntu
+        tags: git-site-clone:test-init-ubuntu
+
   windows-e2e:
     name: windows-e2e
     runs-on: windows-latest
