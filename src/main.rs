@@ -7,7 +7,7 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct ConfigFile {
     base: PathBuf,
     #[serde(default)]
@@ -182,5 +182,14 @@ fn get_config_path() -> PathBuf {
 }
 
 fn load_config() -> ConfigFile {
-    confy::load(env!("CARGO_BIN_NAME"), None).expect("configuration load")
+    confy::load(env!("CARGO_BIN_NAME"), None).unwrap_or_else(|_| {
+        let home = dirs::home_dir().expect("home directory");
+        let base = home.join("git");
+        let config = ConfigFile {
+            base,
+            ..Default::default()
+        };
+        store_config(config.clone());
+        config
+    })
 }
