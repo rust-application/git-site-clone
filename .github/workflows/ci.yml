@@ -22,6 +22,7 @@ jobs:
       with:
         context: .
         load: true
+        no-cache: true
         target: test-alpine
         tags: git-site-clone:test-alpine
 
@@ -42,6 +43,8 @@ jobs:
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
 
     - name: Build
       run: cargo build --release
