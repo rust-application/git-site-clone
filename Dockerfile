@@ -1,4 +1,4 @@
-FROM rust:1.90-alpine AS builder
+FROM rust:1.90 AS builder
 
 WORKDIR /build
 
@@ -6,15 +6,13 @@ COPY Cargo.toml Cargo.lock ./
 COPY rust-toolchain.toml ./
 COPY src ./src
 
-RUN apk add --no-cache musl-dev && \
-    rustup target add aarch64-unknown-linux-musl && \
-    cargo build --release --target aarch64-unknown-linux-musl
+RUN cargo build --release
 
 FROM alpine:3.20 AS test-alpine
 
-RUN apk add --no-cache git qemu-aarch64
+RUN apk add --no-cache git
 
-COPY --from=builder /build/target/aarch64-unknown-linux-musl/release/git-site-clone /usr/local/bin/
+COPY --from=builder /build/target/release/git-site-clone /usr/local/bin/
 
 RUN rm -rf /root/.config/git-site-clone
 
@@ -37,10 +35,10 @@ RUN git-site-clone -v --no-cwd https://github.com/octocat/Hello-World && \
 
 FROM ubuntu:24.04 AS test-ubuntu
 
-RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates qemu-user-static && \
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /build/target/aarch64-unknown-linux-musl/release/git-site-clone /usr/local/bin/
+COPY --from=builder /build/target/release/git-site-clone /usr/local/bin/
 
 RUN rm -rf /root/.config/git-site-clone
 
