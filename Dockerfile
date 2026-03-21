@@ -29,9 +29,16 @@ RUN git-site-clone -v config base /custom/path && \
     git-site-clone -v config show 2>&1 | grep -q 'base = "/custom/path"' && \
     echo "PASS: Alpine config base test" || (echo "FAIL: Alpine config base test" && exit 1)
 
-FROM alpine:3.20 AS test-ubuntu
+RUN rm -rf /root/.config/git-site-clone
 
-RUN apk add --no-cache git qemu-aarch64
+RUN git-site-clone -v --no-cwd https://github.com/octocat/Hello-World && \
+    test -d /root/git/github.com/octocat/Hello-World && \
+    echo "PASS: Alpine clone test" || (echo "FAIL: Alpine clone test" && exit 1)
+
+FROM ubuntu:24.04 AS test-ubuntu
+
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates qemu-user-static && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build/target/aarch64-unknown-linux-musl/release/git-site-clone /usr/local/bin/
 
@@ -47,3 +54,9 @@ RUN rm -rf /root/.config/git-site-clone
 RUN git-site-clone -v config base /custom/path && \
     git-site-clone -v config show 2>&1 | grep -q 'base = "/custom/path"' && \
     echo "PASS: Ubuntu config base test" || (echo "FAIL: Ubuntu config base test" && exit 1)
+
+RUN rm -rf /root/.config/git-site-clone
+
+RUN git-site-clone -v --no-cwd https://github.com/octocat/Hello-World && \
+    test -d /root/git/github.com/octocat/Hello-World && \
+    echo "PASS: Ubuntu clone test" || (echo "FAIL: Ubuntu clone test" && exit 1)
