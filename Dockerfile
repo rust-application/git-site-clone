@@ -6,8 +6,8 @@ COPY Cargo.toml Cargo.lock ./
 COPY rust-toolchain.toml ./
 COPY src ./src
 
-RUN apk add --no-cache musl-dev && \
-    cargo build --release
+RUN apk add --no-cache musl-dev mimalloc2 && \
+    LD_PRELOAD=/usr/lib/libmimalloc2.so cargo build --release
 
 FROM alpine:3.20 AS test-alpine
 
