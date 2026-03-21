@@ -152,10 +152,14 @@ jobs:
           target: s390x-unknown-linux-gnu
           strip: s390x-linux-gnu-strip
           qemu: qemu-s390x
-        - build: macos
+        - build: macos-x86
           os: macos-latest
           rust: 1.90.0
           target: x86_64-apple-darwin
+        - build: macos-arm
+          os: macos-latest
+          rust: 1.90.0
+          target: aarch64-apple-darwin
         - build: win-msvc
           os: windows-latest
           rust: 1.90.0
