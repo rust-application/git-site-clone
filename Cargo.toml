@@ -16,6 +16,7 @@ rust-version = "1.90.0"
 [features]
 default = ["clipboard"]
 clipboard = ["dep:arboard"]
+self-update = ["dep:reqwest", "dep:serde_json"]
 
 [dependencies]
 arboard = { version = "3.6.1", default-features = false, features = [
@@ -25,7 +26,8 @@ confy = "2"
 dirs = "5"
 git-url-parse = "0.6"
 serde = { version = "1", features = ["derive"] }
-# url = "~2.2"
+serde_json = { version = "1", optional = true }
+reqwest = { version = "0.12", features = ["blocking", "json"], optional = true }
 xflags = "0.3.2"
 
 [profile.release]

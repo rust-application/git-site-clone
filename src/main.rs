@@ -22,6 +22,8 @@ mod flags {
         cmd git-site-clone {
             /// Silent mode
             optional -v,--verbose
+            /// Show version information
+            optional -V,--version
             /// Clone a repository from a given URL (or clipboard if not provided)
             default cmd clone {
                 /// Clone a repository from a given URL (or clipboard if not provided)
@@ -55,12 +57,20 @@ mod flags {
             }
             /// Initialize shell integration
             cmd init {}
+            /// Self-update the binary (requires self-update feature)
+            cmd self-update {}
         }
     }
 }
 
 fn main() -> ExitCode {
     let flags = flags::GitSiteClone::from_env_or_exit();
+
+    if flags.version {
+        println!("{}", env!("CARGO_PKG_VERSION"));
+        return ExitCode::SUCCESS;
+    }
+
     let verbose = flags.verbose;
     match flags.subcommand {
         flags::GitSiteCloneCmd::Clone(flags::Clone { url, base, no_cwd }) => {
@@ -177,6 +187,20 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             }
         }
+        flags::GitSiteCloneCmd::SelfUpdate(_) => {
+            #[cfg(feature = "self-update")]
+            {
+                if let Err(e) = self_update() {
+                    eprintln!("Failed to self-update: {}", e);
+                    return ExitCode::FAILURE;
+                }
+            }
+            #[cfg(not(feature = "self-update"))]
+            {
+                eprintln!("Self-update is not enabled. Build with --features self-update");
+                return ExitCode::FAILURE;
+            }
+        }
     }
     ExitCode::SUCCESS
 }
@@ -273,6 +297,78 @@ end
         "Please restart your shell or run: source {}",
         rc_path.display()
     );
+
+    Ok(())
+}
+
+#[cfg(feature = "self-update")]
+fn self_update() -> Result<(), Box<dyn std::error::Error>> {
+    let current_version = env!("CARGO_PKG_VERSION");
+    let repo = "rust-application/git-site-clone";
+
+    eprintln!("Current version: {}", current_version);
+    eprintln!("Checking for updates...");
+
+    let client = reqwest::blocking::Client::new();
+    let url = format!("https://api.github.com/repos/{}/releases/latest", repo);
+    let response = client
+        .request(reqwest::Method::GET, &url)
+        .header(reqwest::header::ACCEPT, "application/vnd.github+json")
+        .header(reqwest::header::USER_AGENT, "git-site-clone")
+        .send()?;
+
+    let json: serde_json::Value = response.json()?;
+    let latest_version = json["tag_name"]
+        .as_str()
+        .ok_or("Could not find latest version")?
+        .trim_start_matches('v');
+
+    eprintln!("Latest version: {}", latest_version);
+
+    if latest_version == current_version {
+        println!("Already up to date!");
+        return Ok(());
+    }
+
+    let os = std::env::consts::OS;
+    let arch = std::env::consts::ARCH;
+
+    let binary_name = if os == "windows" {
+        "git-site-clone.exe"
+    } else {
+        "git-site-clone"
+    };
+
+    let target = match (os, arch) {
+        ("linux", "x86_64") => "x86_64-unknown-linux-musl",
+        ("linux", "aarch64") => "aarch64-unknown-linux-musl",
+        ("macos", "x86_64") => "x86_64-apple-darwin",
+        ("macos", "aarch64") => "aarch64-apple-darwin",
+        ("windows", "x86_64") => "x86_64-pc-windows-msvc",
+        _ => return Err(format!("Unsupported platform: {}-{}", os, arch).into()),
+    };
+
+    let download_url = json["assets"]
+        .as_array()
+        .ok_or("Could not find release assets")?
+        .iter()
+        .find(|asset| {
+            let name = asset["name"].as_str().unwrap_or("");
+            name.contains(target) && name.contains(binary_name)
+        })
+        .ok_or("Could not find release binary")?["browser_download_url"]
+        .as_str()
+        .ok_or("Could not find download URL")?;
+
+    eprintln!("Downloading: {}", download_url);
+
+    let response = client.get(download_url).send()?;
+    let binary_data = response.bytes()?;
+
+    let exe_path = std::env::current_exe()?;
+    std::fs::write(&exe_path, &binary_data)?;
+
+    println!("Updated to version {}!", latest_version);
 
     Ok(())
 }
