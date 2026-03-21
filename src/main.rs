@@ -7,7 +7,7 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct ConfigFile {
     base: PathBuf,
     #[serde(default)]
@@ -182,5 +182,15 @@ fn get_config_path() -> PathBuf {
 }
 
 fn load_config() -> ConfigFile {
+    let config_path = get_config_path();
+    if !config_path.exists() {
+        let home = dirs::home_dir().expect("home directory");
+        let config = ConfigFile {
+            base: home,
+            ..Default::default()
+        };
+        store_config(config.clone());
+        return config;
+    }
     confy::load(env!("CARGO_BIN_NAME"), None).expect("configuration load")
 }
