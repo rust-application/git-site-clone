@@ -83,6 +83,16 @@ RUN git-site-clone -v init && \
     test "$(grep -c "function gsc" /root/.zshrc)" -eq 1 && \
     echo "PASS: Alpine init idempotency" || (echo "FAIL: Alpine init idempotency" && exit 1)
 
+RUN rm -f /root/.zshrc
+
+RUN echo "# Existing configuration" > /root/.zshrc && \
+    echo "export MY_VAR=test" >> /root/.zshrc && \
+    git-site-clone -v init && \
+    grep -q "Existing configuration" /root/.zshrc && \
+    grep -q "export MY_VAR=test" /root/.zshrc && \
+    grep -q "function gsc" /root/.zshrc && \
+    echo "PASS: Alpine init preserves existing content" || (echo "FAIL: Alpine init preserves existing content" && exit 1)
+
 FROM ubuntu:24.04 AS test-init-ubuntu
 
 RUN apt-get update && apt-get install -y --no-install-recommends git zsh ca-certificates && \
@@ -106,3 +116,13 @@ RUN git-site-clone -v init && \
     git-site-clone -v init && \
     test "$(grep -c "function gsc" /root/.zshrc)" -eq 1 && \
     echo "PASS: Ubuntu init idempotency" || (echo "FAIL: Ubuntu init idempotency" && exit 1)
+
+RUN rm -f /root/.zshrc
+
+RUN echo "# Existing configuration" > /root/.zshrc && \
+    echo "export MY_VAR=test" >> /root/.zshrc && \
+    git-site-clone -v init && \
+    grep -q "Existing configuration" /root/.zshrc && \
+    grep -q "export MY_VAR=test" /root/.zshrc && \
+    grep -q "function gsc" /root/.zshrc && \
+    echo "PASS: Ubuntu init preserves existing content" || (echo "FAIL: Ubuntu init preserves existing content" && exit 1)
